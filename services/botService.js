@@ -64,7 +64,7 @@ bot.help((ctx) => {
 bot.on('text', async (ctx) => {
     const url = ctx.message.text;
     try {
-        const result = await videoDownloadService.downloadVideo(url);
+        // const result = await videoDownloadService.downloadVideo(url);
         ctx.reply('Download complete! Video is ready.');
     } catch (err) {
         ctx.reply('Error downloading video. Please try again.');
