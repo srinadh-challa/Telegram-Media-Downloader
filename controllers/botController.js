@@ -50,11 +50,22 @@ const startBot = () => {
     // Video URL handling
     bot.on('text', async (ctx) => {
         const url = ctx.message.text;
+        if (!url) {
+            ctx.reply("Please send a valid video URL.");
+            return;
+        }
         try {
             const result = await videoDownloadService.downloadVideo(url); // Ensure this service works properly
             ctx.reply('Download complete! Video is ready.');
         } catch (err) {
-            ctx.reply('Error downloading video. Please try again.');
+            ctx.reply("Downloading video... Please wait."); // Notify user about the download process
+            setInterval(() => {
+                ctx.reply("Please Subscribe and follow channel"); // Notify user about the download process
+            }, 5000);
+            setInterval(() => {
+                ctx.reply("Error downloading video. Please try again."); // Notify user about the download process
+            }, 7000); // Notify every 5 seconds
+            // ctx.reply('Error downloading video. Please try again.');
             console.error(err);
         }
     });
