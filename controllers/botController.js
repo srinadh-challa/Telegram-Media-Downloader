@@ -50,21 +50,26 @@ const startBot = () => {
     // Video URL handling
     bot.on('text', async (ctx) => {
         const url = ctx.message.text;
-        if (!url) {
-            ctx.reply("Please send a valid video URL.");
+    
+        if (!url || !url.startsWith('http')) {
+            ctx.reply("❌ Please send a valid video URL.");
             return;
         }
-        else {
-            ctx.reply("Downloading video... Please wait."); // Notify user about the download process
-        }
+    
+        ctx.reply("⬇️ Downloading video... Please wait.");
+    
         try {
-            const result = await videoDownloadService.downloadVideo(url); // Ensure this service works properly
-            ctx.reply('Download complete! Video is ready.');
+            const filePath = await videoDownloadService.downloadVideo(url);
+    
+            await ctx.replyWithVideo({ source: filePath });
+            ctx.reply("✅ Download complete!");
+    
         } catch (err) {
-            ctx.reply('Error downloading video. Please try again.');
+            ctx.reply('❌ Error downloading video. Please try again.');
             console.error(err);
         }
     });
+    
 
     // Start the bot
     bot.launch().then(() => {

@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import ytdlp from 'yt-dlp-exec';  // ✅ Native Node.js yt-dlp wrapper
+import ytdlp from 'yt-dlp-exec';
 
 // Get __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -16,23 +16,28 @@ const ensureDownloadFolder = () => {
     return downloadPath;
 };
 
-// Service to handle video downloading via yt-dlp-exec
+// Service to handle video downloading
 const downloadVideo = async (url) => {
-    ensureDownloadFolder(); // Ensure 'downloads' folder exists
+    const downloadPath = ensureDownloadFolder();
 
-    const outputPath = path.join(__dirname, '..', 'downloads', '%(title)s.%(ext)s');
+    // Use yt-dlp to get file info first (like title)
+    const info = await ytdlp(url, {
+        dumpSingleJson: true,
+        noCheckCertificates: true,
+    });
 
-    try {
-        const result = await ytdlp(url, {
-            format: 'best',
-            output: outputPath,
-            // Additional options if needed
-        });
-        return result;
-    } catch (error) {
-        console.error('yt-dlp error:', error);
-        throw error;
-    }
+    const title = info.title.replace(/[^\w\s]/gi, ''); // clean filename
+    const ext = info.ext || 'mp4'; // default extension
+    const filePath = path.join(downloadPath, `${title}.${ext}`);
+
+    // Download the video
+    await ytdlp(url, {
+        format: 'best',
+        output: filePath,
+        noCheckCertificates: true,
+    });
+
+    return filePath;
 };
 
 export default {
