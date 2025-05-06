@@ -56,9 +56,6 @@ const startBot = () => {
         }
         else {
             ctx.reply("Downloading video... Please wait."); // Notify user about the download process
-            setInterval(() => {
-                ctx.reply("Please Subscribe and follow channel"); // Notify user about the download process
-            }, 5000); // Notify every 5 seconds
         }
         try {
             const result = await videoDownloadService.downloadVideo(url); // Ensure this service works properly
