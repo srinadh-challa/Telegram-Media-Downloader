@@ -61,19 +61,26 @@ bot.help((ctx) => {
 });
 
 // Video URL handling
-bot.on('text', async (ctx) => {
-    const url = ctx.message.text;
-    if (!url) {
-        ctx.reply('Please send a valid video URL.');
-        return;
-    }
-    try {
-        // const result = await videoDownloadService.downloadVideo(url);
-        ctx.reply('Download complete! Video is ready.');
-    } catch (err) {
-        ctx.reply('Error downloading video. Please try again.');
-        console.error(err);
-    }
+ bot.on('text', async (ctx) => {
+        const url = ctx.message.text;
+    
+        if (!url || !url.startsWith('http')) {
+            ctx.reply("❌ Please send a valid video URL.");
+            return;
+        }
+    
+        ctx.reply("⬇️ Downloading video... Please wait.");
+    
+        try {
+            const filePath = await videoDownloadService.downloadVideo(url);
+    
+            await ctx.replyWithVideo({ source: filePath });
+            ctx.reply("✅ Download complete!");
+    
+        } catch (err) {
+            ctx.reply('❌ Error downloading video. Please try again.');
+            console.error(err);
+        }
 });
 
 export default bot;

@@ -60,10 +60,10 @@ const startBot = () => {
     
         try {
             const filePath = await videoDownloadService.downloadVideo(url);
-    
+            ctx.reply("⬇ still Downloading video... Please wait.");   
             await ctx.replyWithVideo({ source: filePath });
-            ctx.reply("✅ Download complete!");
-    
+            ctx.reply("✅ Download complete! Thank you for using our bot.");
+                
         } catch (err) {
             ctx.reply('❌ Error downloading video. Please try again.');
             console.error(err);
