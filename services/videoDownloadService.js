@@ -1,10 +1,9 @@
-// services/videoDownloadService.js
-import { exec } from 'child_process';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import ytdlp from 'yt-dlp-exec';  // ✅ Native Node.js yt-dlp wrapper
 
-// Get the current directory path using import.meta.url
+// Get __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -14,30 +13,26 @@ const ensureDownloadFolder = () => {
     if (!fs.existsSync(downloadPath)) {
         fs.mkdirSync(downloadPath, { recursive: true });
     }
+    return downloadPath;
 };
 
-// Service to handle video downloading via yt-dlp
+// Service to handle video downloading via yt-dlp-exec
 const downloadVideo = async (url) => {
-    return new Promise((resolve, reject) => {
-        ensureDownloadFolder(); // Ensure the 'downloads' folder exists
+    ensureDownloadFolder(); // Ensure 'downloads' folder exists
 
-        const outputPath = path.join(__dirname, '..', 'downloads', '%(title)s.%(ext)s');
-        
-        // const command = `yt-dlp -f best --output "${outputPath}" ${url}`;
-        const command = `python3 -m yt_dlp -f best --output "${outputPath}" ${url}`;
-        
-        exec(command, (error, stdout, stderr) => {
-            if (error) {
-                reject(`Error: ${error.message}`);
-                return;
-            }
-            if (stderr) {
-                reject(`stderr: ${stderr}`);
-                return;
-            }
-            resolve(stdout);
+    const outputPath = path.join(__dirname, '..', 'downloads', '%(title)s.%(ext)s');
+
+    try {
+        const result = await ytdlp(url, {
+            format: 'best',
+            output: outputPath,
+            // Additional options if needed
         });
-    });
+        return result;
+    } catch (error) {
+        console.error('yt-dlp error:', error);
+        throw error;
+    }
 };
 
 export default {
