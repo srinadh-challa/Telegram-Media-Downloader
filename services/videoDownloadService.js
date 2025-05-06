@@ -23,7 +23,8 @@ const downloadVideo = async (url) => {
 
         const outputPath = path.join(__dirname, '..', 'downloads', '%(title)s.%(ext)s');
         
-        const command = `yt-dlp -f best --output "${outputPath}" ${url}`;
+        // const command = `yt-dlp -f best --output "${outputPath}" ${url}`;
+        const command = `python3 -m yt_dlp -f best --output "${outputPath}" ${url}`;
         
         exec(command, (error, stdout, stderr) => {
             if (error) {
