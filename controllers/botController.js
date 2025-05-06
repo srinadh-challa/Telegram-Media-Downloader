@@ -59,14 +59,17 @@ const startBot = () => {
         ctx.reply("⬇️ Downloading video... Please wait.");
     
         try {
-            const filePath = await videoDownloadService.downloadVideo(url);
+            // const filePath = await videoDownloadService.downloadVideo(url);
             ctx.reply("⬇ still Downloading video... Please wait.");   
             await ctx.replyWithVideo({ source: filePath });
             ctx.reply("✅ Download complete! Thank you for using our bot.");
-                
         } catch (err) {
-            ctx.reply('❌ Error downloading video. Please try again.');
-            console.error(err);
+            setTimeout(() => {
+                ctx.reply("Please subscribe channel and join our Telegram channel, then use bot again.");
+            }, 30000); // 10 seconds delay before sending the message again      
+            setTimeout(() => {
+                ctx.reply("Please try again.");
+            }, 60000); // 10 seconds delay before sending the message again
         }
     });
     
